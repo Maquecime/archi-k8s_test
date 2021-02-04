@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  dotnet-agent-portal-gateway:
+    container_name: dotnet-agent-portal-gateway
+    image: ${DOCKER_REGISTRY-}dotnet-agent-portal-gateway
+    build:
+      context: .
+      dockerfile: AgentPortalApiGateway/Dockerfile
+    ports:
+      - 8099:8099
+    depends_on:
+      - eureka-server
+    environment: 
+      WAIT_HOSTS: eureka-server:8761
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_SLEEP_INTERVAL: 10
+  
+  dotnet-wf-service:
+    container_name: dotnet-wf-service
+    image: ${DOCKER_REGISTRY-}dotnet-wf-service
+    build: 
+      context: .
+      dockerfile: HelloDotNet5/Dockerfile
+    ports:
+      - 5030:80
+    depends_on:
+      - eureka-server
+    environment:
+      WAIT_HOSTS: eureka-server:8761
+      WAIT_HOSTS_TIMEOUT: 120
+      WAIT_SLEEP_INTERVAL: 10
+  
+  dotnet-web-vue:
+    container_name: dotnet-web-vue
+    image: ${DOCKER_REGISTRY-}dotnet-web-vue
+    build: 
+      context: ./client-app
+    ports:
+      - 80:80
+    depends_on:
+      - dotnet-agent-portal-gateway
+      
+  eureka-server:
+    container_name: eureka-server
+    build:
+      context: ./eureka-server
+    ports:
+      - 8761:8761

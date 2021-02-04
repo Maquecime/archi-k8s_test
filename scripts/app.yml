@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  dotnet-agent-portal-gateway:
+    build: 
+      context: ../
+      dockerfile: AgentPortalApiGateway/Dockerfile
+    image: dotnet-agent-portal-gateway
+    container_name: dotnet-agent-portal-gateway
+    network_mode: host
+
+  dotnet-product-service:
+    build: 
+      context: ../
+      dockerfile: ProductService/Dockerfile
+    image: dotnet-product-service
+    container_name: dotnet-product-service
+    network_mode: host
+
+  dotnet-web-vue:
+    build: ../Web
+    image: dotnet-web-vue
+    container_name: dotnet-web-vue
+    network_mode: host
